@@ -1,1 +1,15 @@
+# Core ML
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+
+# Data / I/O
+Pillow>=9.0.0
+tqdm>=4.65.0
+
+# Training logs & offline plots
+matplotlib>=3.7.0
+
+# Streamlit app
+pandas>=2.0.0
 streamlit>=1.28.0
