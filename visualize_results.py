@@ -6,14 +6,14 @@ import numpy as np
 from PIL import Image
 
 
-def get_latest_sample(samples_dir: Path, model_prefix: str) -> Path:
+def get_latest_sample(samples_dir: Path, model_prefix: str):
     images = sorted(samples_dir.glob(f"{model_prefix}_epoch_*.png"))
     if not images:
         raise FileNotFoundError(f"No sample grids found for '{model_prefix}' in: {samples_dir}")
     return images[-1]
 
 
-def extract_tiles_from_grid(grid_path: Path, n_samples: int) -> List[np.ndarray]:
+def extract_tiles_from_grid(grid_path: Path, n_samples: int):
     img = Image.open(grid_path).convert("RGB")
     arr = np.array(img)
     height, width, _ = arr.shape
@@ -34,7 +34,7 @@ def extract_tiles_from_grid(grid_path: Path, n_samples: int) -> List[np.ndarray]
     return tiles
 
 
-def plot_samples(samples: List[np.ndarray], title: str, out_path: Path) -> None:
+def plot_samples(samples: List[np.ndarray], title: str, out_path: Path):
     fig, axes = plt.subplots(1, len(samples), figsize=(2 * len(samples), 2.5))
     if len(samples) == 1:
         axes = [axes]
@@ -48,9 +48,7 @@ def plot_samples(samples: List[np.ndarray], title: str, out_path: Path) -> None:
     plt.close(fig)
 
 
-def plot_comparison(
-    dcgan_samples: List[np.ndarray], wgan_samples: List[np.ndarray], out_path: Path
-) -> None:
+def plot_comparison(dcgan_samples: List[np.ndarray], wgan_samples: List[np.ndarray], out_path: Path):
     n = min(len(dcgan_samples), len(wgan_samples))
     fig, axes = plt.subplots(2, n, figsize=(2 * n, 5))
     for i in range(n):

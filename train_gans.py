@@ -36,9 +36,7 @@ class FlatImageDataset(Dataset):
         self.root = root
         self.transform = transform
         self.files: List[Path] = []
-        for ext in ("*.png", "*.jpg", "*.jpeg", "*.webp"):
-            self.files.extend(root.rglob(ext))
-        self.files = sorted(self.files)
+        self.files.extend(root.glob("*.png"))
         if not self.files:
             raise ValueError(f"No images found in: {root}")
 
@@ -58,17 +56,12 @@ def resolve_dataset(data_root: Path, image_size: int) -> Dataset:
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
         ]
     )
-    class_folders = [p for p in data_root.iterdir() if p.is_dir()]
-    if class_folders:
-        return datasets.ImageFolder(root=str(data_root), transform=transform)
     return FlatImageDataset(root=data_root, transform=transform)
 
 
-def gradient_penalty(
-    critic: nn.Module, real: torch.Tensor, fake: torch.Tensor, device: torch.device
-) -> torch.Tensor:
+def gradient_penalty(critic: nn.Module, real: torch.Tensor, fake: torch.Tensor, device: torch.device):
     batch_size, channels, height, width = real.shape
-    epsilon = torch.rand(batch_size, 1, 1, 1, device=device).repeat(1, channels, height, width)
+    epsilon = torch.rand(batch_size, 1, 1, 1, device=device)
     interpolated = real * epsilon + fake * (1.0 - epsilon)
     interpolated.requires_grad_(True)
 
@@ -77,16 +70,12 @@ def gradient_penalty(
         outputs=mixed_scores,
         inputs=interpolated,
         grad_outputs=torch.ones_like(mixed_scores),
-        create_graph=True,
-        retain_graph=True,
     )[0]
     grad = grad.view(grad.shape[0], -1)
     return ((grad.norm(2, dim=1) - 1.0) ** 2).mean()
 
 
-def save_grid(
-    generator: nn.Module, fixed_noise: torch.Tensor, epoch: int, tag: str, out_dir: Path
-) -> None:
+def save_grid(generator: nn.Module, fixed_noise: torch.Tensor, epoch: int, tag: str, out_dir: Path):
     generator.eval()
     with torch.no_grad():
         fake = generator(fixed_noise)
@@ -169,8 +158,6 @@ def train_dcgan(loader: DataLoader, device: torch.device, out_root: Path) -> Non
         g_running = 0.0
         progress = tqdm(loader, desc=f"DCGAN Epoch {epoch}/{epochs_dcgan}", leave=False)
         for real in progress:
-            if isinstance(real, (tuple, list)):
-                real = real[0]
             real = real.to(device)
             bsz = real.shape[0]
 
@@ -253,8 +240,6 @@ def train_wgan_gp(loader: DataLoader, device: torch.device, out_root: Path) -> N
         w_running = 0.0
         progress = tqdm(loader, desc=f"WGAN-GP Epoch {epoch}/{epochs_wgangp}", leave=False)
         for real in progress:
-            if isinstance(real, (tuple, list)):
-                real = real[0]
             real = real.to(device)
             bsz = real.shape[0]
 
