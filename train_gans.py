@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms, utils
 from tqdm import tqdm
 
-from gan_models import Critic, Discriminator, Generator, weights_init
+from gan_models import Critic, Discriminator, Generator
 
 data_dir = "data"
 output_dir = "outputs"
@@ -127,8 +127,6 @@ def _find_latest_pair(ckpt_dir: Path, gen_pattern: str, other_pattern: str) -> T
 def train_dcgan(loader: DataLoader, device: torch.device, out_root: Path) -> None:
     g = Generator(z_dim=z_dim).to(device)
     d = Discriminator().to(device)
-    g.apply(weights_init)
-    d.apply(weights_init)
 
     criterion = nn.BCELoss()
     opt_g = optim.Adam(g.parameters(), lr=lr, betas=(0.5, 0.999))
@@ -213,8 +211,6 @@ def train_dcgan(loader: DataLoader, device: torch.device, out_root: Path) -> Non
 def train_wgan_gp(loader: DataLoader, device: torch.device, out_root: Path) -> None:
     g = Generator(z_dim=z_dim).to(device)
     c = Critic().to(device)
-    g.apply(weights_init)
-    c.apply(weights_init)
 
     opt_g = optim.Adam(g.parameters(), lr=lr, betas=(0.5, 0.999))
     opt_c = optim.Adam(c.parameters(), lr=lr, betas=(0.5, 0.999))

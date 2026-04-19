@@ -22,7 +22,7 @@ class Generator(nn.Module):
             nn.Tanh(),
         )
 
-    def forward(self, z: torch.Tensor) -> torch.Tensor:
+    def forward(self, z: torch.Tensor):
         return self.net(z)
 
 
@@ -45,7 +45,7 @@ class Discriminator(nn.Module):
             nn.Sigmoid(),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor):
         return self.net(x).view(-1)
 
 
@@ -67,15 +67,5 @@ class Critic(nn.Module):
             nn.Conv2d(features * 8, 1, 4, 1, 0, bias=False),
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor):
         return self.net(x).view(-1)
-
-
-def weights_init(module: nn.Module) -> None:
-    if isinstance(module, (nn.Conv2d, nn.ConvTranspose2d)):
-        nn.init.normal_(module.weight.data, 0.0, 0.02)
-    elif isinstance(module, (nn.BatchNorm2d, nn.InstanceNorm2d)):
-        if module.weight is not None:
-            nn.init.normal_(module.weight.data, 1.0, 0.02)
-        if module.bias is not None:
-            nn.init.constant_(module.bias.data, 0.0)

@@ -67,9 +67,7 @@ def plot_comparison(
     plt.close(fig)
 
 
-def visualize_results(
-    output_dir: Path, n_samples: int, show: bool
-) -> Tuple[Path, Path, Path]:
+def visualize_results(output_dir: Path, n_samples: int):
     dcgan_grid = get_latest_sample(output_dir / "dcgan" / "samples", "dcgan")
     wgan_grid = get_latest_sample(output_dir / "wgan_gp" / "samples", "wgan_gp")
 
@@ -84,28 +82,16 @@ def visualize_results(
     plot_samples(dcgan_samples, f"DCGAN Generated Samples ({len(dcgan_samples)})", dcgan_out)
     plot_samples(wgan_samples, f"WGAN-GP Generated Samples ({len(wgan_samples)})", wgan_out)
     plot_comparison(dcgan_samples, wgan_samples, comp_out)
-
-    if show:
-        for path in (dcgan_out, wgan_out, comp_out):
-            img = Image.open(path)
-            plt.figure(figsize=(12, 4 if "vs" not in path.name else 6))
-            plt.imshow(np.array(img))
-            plt.axis("off")
-            plt.title(path.name)
-            plt.show()
-
-    return dcgan_out, wgan_out, comp_out
+    print("Saved visualizations:")
+    for path in (dcgan_out, wgan_out, comp_out):
+        img = Image.open(path)
+        plt.figure(figsize=(12, 4 if "vs" not in path.name else 6))
+        plt.imshow(np.array(img))
+        plt.axis("off")
+        plt.title(path.name)
+        plt.show()
+    return
 
 
 if __name__ == "__main__":
-    output_dir = Path("outputs")
-    num_samples = 10
-    show = False
-
-    if num_samples < 5 or num_samples > 10:
-        raise ValueError("num_samples should be between 5 and 10 for assignment requirement.")
-
-    outputs = visualize_results(output_dir, num_samples, show)
-    print("Saved visualizations:")
-    for out in outputs:
-        print(f"- {out}")
+    outputs = visualize_results(Path("outputs"), 10)
