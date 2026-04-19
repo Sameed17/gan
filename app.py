@@ -7,22 +7,6 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 import torch
-
-from gan_demo import (
-    Z_DIM,
-    discriminator_path,
-    generate,
-    generator_path,
-    list_generator_epochs,
-    load_critic,
-    load_discriminator,
-    load_generator,
-    make_noise,
-    mean_critic_score,
-    mean_discriminator_score,
-    shared_epochs,
-    tensors_to_rgb_uint8,
-)
 from gan_models import Critic, Discriminator, Generator
 
 import re
